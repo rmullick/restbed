@@ -121,9 +121,9 @@ matrix:
        - make -j3
        - ctest -T memcheck
 
-notifications:
-  recipients:
-    - rakib_mc12@yahoo.com
-  email:
-    on_success: change
-    on_failure: always
+         #notifications:
+         #  recipients:
+         #    - rakib_mc12@yahoo.com
+         #  email:
+         #    on_success: change
+         #    on_failure: always
