@@ -11,18 +11,16 @@ matrix:
   include:
     - os: linux
       compiler: gcc
+      env:
+       - COMPILERCXX="g++-5"
+       - COMPILERC="gcc-5"
+       - OPENSSL_VERSION=openssl-1.1.0
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-            - cppcheck
-            - python-pip
-      env:
-       - COMPILERCXX="g++-5"
-       - COMPILERC="gcc-5"
-       - OPENSSL_VERSION=openssl-1.1.0
       script:
        - cd build
        - cmake -DBUILD_SSL=NO ..
@@ -38,15 +36,6 @@ matrix:
            - ubuntu-toolchain-r-test
           packages:
            - g++-5             #libstdc++5 required
-      script:
-       - cd build
-       - cmake -DBUILD_SSL=NO ..
-       - make -j3 && make test	# j suppose to be based on number of processor...
-
-    - os: osx
-      compiler: gcc
-      env:
-       - TEST="osx-gcc"
       script:
        - cd build
        - cmake -DBUILD_SSL=NO ..
@@ -91,12 +80,28 @@ matrix:
           packages:
            - cppcheck
       script:
-       - cppcheck --enable=all --std=c++11 --verbose --error-exitcode=1 --language=c++ -I source/corvusoft/restbed/*.hpp source/corvusoft/restbed/detail/*.hpp source/corvusoft/restbed > cppcheck.log 2>&1
+       - cppcheck --enable=warning,style,performance,portability,unusedFunction --std=c++11 --verbose --error-exitcode=1 --language=c++ -I source/corvusoft/restbed/*.hpp source/corvusoft/restbed/detail/*.hpp source/corvusoft/restbed > cppcheck.log 2>&1
          # just print few of them...
        - |
                echo "Number of performance issue found: " `grep cppcheck.log -e performace|wc -l`
                echo "Number of style issue found: " `grep cppcheck.log -e style|wc -l`
                echo "Number of unused function: " `grep cppcheck.log -e unusedFunction|wc -l`
+
+
+    # Code coverage based on gcov
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - lcov
+      script:
+       - cd build
+       - cmake -DBUILD_SSL=NO -DBUILD_COVERAGE=ON ..
+       - make -j3 && make gcov
 
 notifications:
   recipients:

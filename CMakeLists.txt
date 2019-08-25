@@ -8,6 +8,7 @@ message( "Copyright 2013-2018, Corvusoft Ltd, All Rights Reserved." )
 #
 option( BUILD_SSL      "Build secure socket layer support."  ON )
 option( BUILD_TESTS    "Build unit tests."  ON )
+option( BUILD_COVERAGE    "Build code coverage tests."  ON )
 option( BUILD_STATIC   "Build static library."  ON )
 option( BUILD_SHARED   "Build shared library."  OFF )
 
@@ -17,7 +18,9 @@ option( BUILD_SHARED   "Build shared library."  OFF )
 set( CMAKE_CXX_STANDARD 11 )
 set( INCLUDE_DIR "${PROJECT_SOURCE_DIR}/source" )
 set( SOURCE_DIR  "${PROJECT_SOURCE_DIR}/source/corvusoft/${PROJECT_NAME}" )
-
+set( CMAKE_BINARY_DIR  "${PROJECT_SOURCE_DIR}/build" )
+set( CMAKE_LD_FLAGS  "${CMAKE_LD_FLAGS} -lgcov --coverage" )
+	
 if ( NOT DEFINED CMAKE_INSTALL_LIBDIR )
     set( CMAKE_INSTALL_LIBDIR lib )
 endif ( )
@@ -47,6 +50,14 @@ set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake" )
 find_package( asio REQUIRED )
 if ( BUILD_SSL )
     find_package( openssl REQUIRED )
+endif ( )
+
+if ( BUILD_COVERAGE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif ( )
 
 include_directories( ${INCLUDE_DIR} SYSTEM ${asio_INCLUDE} ${kashmir_INCLUDE} ${ssl_INCLUDE} )
@@ -82,6 +93,26 @@ if ( BUILD_SHARED )
         target_link_libraries( ${SHARED_LIBRARY_NAME} )
     endif ( )
 endif ( )
+
+# Create the gcov target. Run coverage tests with 'make gcov'
+add_custom_target(gcov
+    COMMAND mkdir -p coverage
+    COMMAND ${CMAKE_MAKE_PROGRAM} test
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+add_custom_command(TARGET gcov
+    COMMAND echo "=================== GCOV ===================="
+    COMMAND gcov -abcfu ${CMAKE_SOURCE_DIR}/test/unit/source/*.cpp -o ${CMAKE_BINARY_DIR}/test/unit/CMakeFiles/*/source/*
+    #COMMAND cat CoverageSummary.tmp
+    COMMAND cp ${PROJECT_SOURCE_DIR}/test/unit/source/*.cpp ${PROJECT_SOURCE_DIR}/build/coverage
+    COMMAND cp ${PROJECT_SOURCE_DIR}/build/test/unit/CMakeFiles/*/source/*.gcda ${PROJECT_SOURCE_DIR}/build/coverage
+    COMMAND cp ${PROJECT_SOURCE_DIR}/build/test/unit/CMakeFiles/*/source/*.gcno ${PROJECT_SOURCE_DIR}/build/coverage
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/coverage
+    COMMAND lcov --directory . --capture --output-file app.info
+    COMMAND genhtml app.info
+    COMMAND echo "-- Coverage files have been output to ${CMAKE_BINARY_DIR}/coverage"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/coverage  # Need separate command for this line
+    )
 
 if ( BUILD_TESTS )
     find_package( catch REQUIRED )
