@@ -62,6 +62,24 @@ matrix:
        - cmake -DBUILD_SSL=NO ..
        - make -j3 && make test	# j suppose to be based on number of processor...
 
+    #
+    # Documentation generation
+    #
+    - os: linux
+      env:
+       - TEST="Documentation"
+      addons:
+        apt:
+          packages:
+           - doxygen
+      script:
+       - doxygen > doxygen-output.log 2>&1
+       - COUNT=`grep -rnw doxygen-output.log -e "warning:" | wc -l`
+       - if [[ "$COUNT" > "0" ]]; then
+            # On ideal case we have to return error, for now just let user know
+            echo "Documentation error found. Please take a look."
+         fi
+
 notifications:
   recipients:
     - rakib_mc12@yahoo.com
