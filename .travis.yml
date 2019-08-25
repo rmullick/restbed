@@ -103,6 +103,24 @@ matrix:
        - cmake -DBUILD_SSL=NO -DBUILD_COVERAGE=ON ..
        - make -j3 && make gcov
 
+    # Memory check testing
+    - os: linux
+      compiler: gcc
+      env:
+       - TEST="MemoryCheck"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - valgrind
+      script:
+       - cd build
+       - cmake -DBUILD_SSL=NO -DBUILD_VALGRIND=ON ..
+       - make -j3
+       - ctest -T memcheck
+
 notifications:
   recipients:
     - rakib_mc12@yahoo.com

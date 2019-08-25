@@ -52,12 +52,19 @@ if ( BUILD_SSL )
     find_package( openssl REQUIRED )
 endif ( )
 
-if ( BUILD_COVERAGE)
+if ( BUILD_COVERAGE )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftest-coverage")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+endif ( )
+
+if ( BUILD_VALGRIND )
+    set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --leak-check=full")
+    set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --track-fds=yes")
+    set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --trace-children=yes")
+    set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1")
 endif ( )
 
 include_directories( ${INCLUDE_DIR} SYSTEM ${asio_INCLUDE} ${kashmir_INCLUDE} ${ssl_INCLUDE} )
@@ -113,6 +120,8 @@ add_custom_command(TARGET gcov
     COMMAND echo "-- Coverage files have been output to ${CMAKE_BINARY_DIR}/coverage"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/coverage  # Need separate command for this line
     )
+
+include(CTest)
 
 if ( BUILD_TESTS )
     find_package( catch REQUIRED )
