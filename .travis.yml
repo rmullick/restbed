@@ -20,7 +20,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5
+            - g++-6
       script:
        - cd build
        - cmake -DBUILD_SSL=NO ..
@@ -96,7 +96,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5
+            - g++-6
             - lcov
       script:
        - cd build
@@ -113,7 +113,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5
+            - g++-6
             - valgrind
       script:
        - cd build
