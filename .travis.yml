@@ -79,7 +79,7 @@ matrix:
           packages:
            - cppcheck
       script:
-       - cppcheck --enable=warning,style,performance,portability,unusedFunction --std=c++11 --verbose --error-exitcode=1 --language=c++ -I source/corvusoft/restbed/*.hpp source/corvusoft/restbed/detail/*.hpp source/corvusoft/restbed > cppcheck.log 2>&1
+       - cppcheck --enable=warning,style,performance,portability,unusedFunction --std=c++11 --verbose --language=c++ -I source/corvusoft/restbed/*.hpp source/corvusoft/restbed/detail/*.hpp source/corvusoft/restbed > cppcheck.log 2>&1
          # just print few of them...
        - |
                echo "Number of performance issue found: " `grep cppcheck.log -e performace|wc -l`
