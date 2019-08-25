@@ -12,15 +12,14 @@ matrix:
     - os: linux
       compiler: gcc
       env:
-       - COMPILERCXX="g++-5"
-       - COMPILERC="gcc-5"
+       - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
        - OPENSSL_VERSION=openssl-1.1.0
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-6
+            - g++-5
       script:
        - cd build
        - cmake -DBUILD_SSL=NO ..
@@ -91,6 +90,8 @@ matrix:
     # Code coverage based on gcov
     - os: linux
       compiler: gcc
+      env:
+       - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       addons:
         apt:
           sources:
@@ -107,13 +108,14 @@ matrix:
     - os: linux
       compiler: gcc
       env:
+       - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
        - TEST="MemoryCheck"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-6
+            - g++-5
             - valgrind
       script:
        - cd build
