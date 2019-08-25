@@ -20,7 +20,6 @@ matrix:
             - cppcheck
             - python-pip
       env:
-       - TEST="linux-g++5"
        - COMPILERCXX="g++-5"
        - COMPILERC="gcc-5"
        - OPENSSL_VERSION=openssl-1.1.0
@@ -75,10 +74,29 @@ matrix:
       script:
        - doxygen > doxygen-output.log 2>&1
        - COUNT=`grep -rnw doxygen-output.log -e "warning:" | wc -l`
-       - if [[ "$COUNT" > "0" ]]; then
+       - |
+         if [[ "$COUNT" > "0" ]]; then
             # On ideal case we have to return error, for now just let user know
             echo "Documentation error found. Please take a look."
          fi
+
+    #
+    # cppcheck
+    #
+    - os: linux
+      env:
+       - TEST="cppcheck"
+      addons:
+        apt:
+          packages:
+           - cppcheck
+      script:
+       - cppcheck --enable=all --std=c++11 --verbose --error-exitcode=1 --language=c++ -I source/corvusoft/restbed/*.hpp source/corvusoft/restbed/detail/*.hpp source/corvusoft/restbed > cppcheck.log 2>&1
+         # just print few of them...
+       - |
+               echo "Number of performance issue found: " `grep cppcheck.log -e performace|wc -l`
+               echo "Number of style issue found: " `grep cppcheck.log -e style|wc -l`
+               echo "Number of unused function: " `grep cppcheck.log -e unusedFunction|wc -l`
 
 notifications:
   recipients:
