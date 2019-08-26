@@ -147,10 +147,10 @@ matrix:
       addons:
         apt:
           packages:
-           - python-pip
+           - curl
       script:
-       - pip install cpplint
-       - cpplint source/corvusoft/restbed/*{.cpp,hpp} > lint.log 2>&1
+       - curl https://raw.githubusercontent.com/cpplint/cpplint/master/cpplint.py -o cpplint.py
+       - python cpplint.py source/corvusoft/restbed/*{.cpp,hpp} > lint.log 2>&1
        - OUTPUT=`grep lint.log -e "Total errors found:"`
        - echo $OUTPUT
 
