@@ -44,8 +44,10 @@ matrix:
 
       before_deploy:
        - cd ..
+       - LASTTAG=`git tag -l |tail -n 2|head -n 1`
        - VTAG=`git describe --abbrev=0 --tags`-`date +%d-%m-%Y-%T`
-       - zip -r restbed-$VTAG.zip distribution/*
+       - git log $LASTTAG.. --pretty=full --format="%s %ce" >> CHANGELOG.md
+       - zip -r restbed-$VTAG.zip distribution/* CHANGELOG.md
 
       deploy:
        provider: custom
