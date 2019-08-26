@@ -20,10 +20,27 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
+            - zip
       script:
        - cd build
        - cmake -DBUILD_SSL=NO ..
-       - make -j3 && make test	# j suppose to be based on number of processor...
+       - make -j3
+       - make test	# j suppose to be based on number of processor...
+       - make install
+
+      before_deploy:
+       - cd ..
+       - VTAG=`git describe --abbrev=0 --tags`-`date +%d-%m-%Y-%T`
+       - zip -r restbed-$VTAG.zip distribution/*
+
+      deploy:
+       skip_cleanup: true
+       api_key:
+         secure:
+       file_glob: true
+       file: restbed-*.zip
+       - on:
+          tags: true
 
     - os: linux
       compiler: clang
