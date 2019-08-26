@@ -64,7 +64,7 @@ if ( BUILD_VALGRIND )
     set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --leak-check=full")
     set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --track-fds=yes")
     set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --trace-children=yes")
-    set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1")
+    #set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1")
 endif ( )
 
 include_directories( ${INCLUDE_DIR} SYSTEM ${asio_INCLUDE} ${kashmir_INCLUDE} ${ssl_INCLUDE} )
@@ -109,8 +109,7 @@ add_custom_target(gcov
     )
 add_custom_command(TARGET gcov
     COMMAND echo "=================== GCOV ===================="
-    COMMAND gcov -abcfu ${CMAKE_SOURCE_DIR}/test/unit/source/*.cpp -o ${CMAKE_BINARY_DIR}/test/unit/CMakeFiles/*/source/*
-    #COMMAND cat CoverageSummary.tmp
+    COMMAND gcov -abcfu ${CMAKE_SOURCE_DIR}/test/unit/source/*.cpp -o ${CMAKE_BINARY_DIR}/test/unit/CMakeFiles/*/source/* > gcov.log 2>&1
     COMMAND cp ${PROJECT_SOURCE_DIR}/test/unit/source/*.cpp ${PROJECT_SOURCE_DIR}/build/coverage
     COMMAND cp ${PROJECT_SOURCE_DIR}/build/test/unit/CMakeFiles/*/source/*.gcda ${PROJECT_SOURCE_DIR}/build/coverage
     COMMAND cp ${PROJECT_SOURCE_DIR}/build/test/unit/CMakeFiles/*/source/*.gcno ${PROJECT_SOURCE_DIR}/build/coverage
