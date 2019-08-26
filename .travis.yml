@@ -86,6 +86,21 @@ matrix:
                echo "Number of style issue found: " `grep cppcheck.log -e style|wc -l`
                echo "Number of unused function: " `grep cppcheck.log -e unusedFunction|wc -l`
 
+    #
+    # cpplint
+    #
+    - os: linux
+      env:
+       - TEST="cpplint"
+      addons:
+        apt:
+          packages:
+           - python-pip
+      script:
+       - pip install cpplint
+       - cpplint source/corvusoft/restbed/*{.cpp,hpp} > lint.log 2>&1
+       - OUTPUT=`grep lint.log -e "Total errors found:"`
+       - echo $OUTPUT
 
     # Code coverage based on gcov
     - os: linux
