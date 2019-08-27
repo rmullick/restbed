@@ -94,6 +94,7 @@ matrix:
            - wget
 
       before_script:
+       - mkdir build
        - wget https://github.com/mull-project/mull/releases/download/0.4.0/Mull-0.4.0-LLVM-8.0-ubuntu-16.04.deb -O ~/Mull.deb
        - sudo dpkg -i ~/Mull.deb
 
