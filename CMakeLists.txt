@@ -8,7 +8,6 @@ message( "Copyright 2013-2018, Corvusoft Ltd, All Rights Reserved." )
 #
 option( BUILD_SSL      "Build secure socket layer support."  ON )
 option( BUILD_TESTS    "Build unit tests."  ON )
-option( BUILD_COVERAGE    "Build code coverage tests."  ON )
 option( BUILD_STATIC   "Build static library."  ON )
 option( BUILD_SHARED   "Build shared library."  OFF )
 
@@ -65,6 +64,12 @@ if ( BUILD_VALGRIND )
     set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --track-fds=yes")
     set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --trace-children=yes")
     #set(MEMORYCHECK_COMMAND_OPTIONS "${MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1")
+endif ( )
+
+if ( BUILD_MUTATION_TEST )
+   set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -g ")
+   set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -O0 ")
+   set(CMAKE_CXX_FLAGS, "${CMAKE_CXX_FLAGS} -fembed-bitcode ")
 endif ( )
 
 include_directories( ${INCLUDE_DIR} SYSTEM ${asio_INCLUDE} ${kashmir_INCLUDE} ${ssl_INCLUDE} )

@@ -87,10 +87,24 @@ matrix:
            - ubuntu-toolchain-r-test
           packages:
            - g++-5             #libstdc++5 required
+           - uuid-dev
+           - libxml2-dev
+           - libsqlite3-dev
+           - libz-dev
+           - wget
+
+      before_script:
+       - wget https://github.com/mull-project/mull/releases/download/0.4.0/Mull-0.4.0-LLVM-8.0-ubuntu-16.04.deb
+       - sudo dpkg -i Mull-0.4.0-LLVM-8.0.ubuntu-16.04.deb
+
       script:
        - cd build
-       - cmake -DBUILD_SSL=NO ..
-       - make -j3 && make test	# j suppose to be based on number of processor...
+       - cmake -DBUILD_SSL=NO -DBUILD_MUTATION_TEST=ON ..
+       - make -j3
+       - make test	# j suppose to be based on number of processor...
+       - cp ../mutationtest.sh .
+       - chmod +x ./mutationtest.sh
+       - ./mutationtest.sh
 
     - os: osx
       compiler: clang
